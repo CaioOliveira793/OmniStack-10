@@ -9,6 +9,8 @@ mongoose.connect(
 	'mongodb+srv://omnistack:omnistack_pass@cluster0-zvyis.gcp.mongodb.net/week10?retryWrites=true&w=majority',
 	{
 		useNewUrlParser: true,
+		useFindAndModify: false,
+		useCreateIndex: true,
 		useUnifiedTopology: true
 	}
 );
