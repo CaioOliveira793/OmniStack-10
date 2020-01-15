@@ -12,6 +12,8 @@ function App() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
 
+  const [devs, setDevs] = useState([]);
+
   useEffect(() => {
   	navigator.geolocation.getCurrentPosition(
 		(position) => {
@@ -27,6 +29,16 @@ function App() {
 	  );
   }, []);
 
+  useEffect(() => {
+	async function loadDevs() {
+	  const response = await api.get('/devs');
+
+	  setDevs(response.data);
+	}
+
+	loadDevs();
+  }, []);
+
   async function handleAddDev(e) {
 	e.preventDefault();
 	const response = await api.post('/devs', {
@@ -36,7 +48,10 @@ function App() {
 	  longitude
 	});
 
-	console.log(response.data);
+	setGithubUsername('');
+	setTechs('');
+
+	setDevs([...devs, response.data]);
   }
 
   return (
@@ -99,48 +114,22 @@ function App() {
 	  </aside>
 	  <main>
 	  	<ul>
-		  <li className="dev-item">
-		  	<header>
-			  <img
-			    src="https://avatars1.githubusercontent.com/u/49573894?s=460&v=4"
-			    alt="Caio Oliveira"
-			  />
-			  <div className="user-info">
-			  	<strong>Caio Oliveira</strong>
-				<span>ReactJS, Node.js</span>
-			  </div>
-			</header>
-			<p>user bio</p>
-			<a href="https://github.com/CaioOliveira793">Acessar perfil no GitHub</a>
-		  </li>
-		  <li className="dev-item">
-		  	<header>
-			  <img
-			    src="https://avatars1.githubusercontent.com/u/49573894?s=460&v=4"
-				alt="Caio Oliveira"
-			  />
-			  <div className="user-info">
-			  	<strong>Caio Oliveira</strong>
-				<span>ReactJS, Node.js</span>
-			  </div>
-			</header>
-			<p>user bio</p>
-			<a href="https://github.com/CaioOliveira793">Acessar perfil no GitHub</a>
-		  </li>
-		  <li className="dev-item">
-		  	<header>
-			  <img
-			    src="https://avatars1.githubusercontent.com/u/49573894?s=460&v=4"
-				alt="Caio Oliveira"
-			  />
-			  <div className="user-info">
-			  	<strong>Caio Oliveira</strong>
-				<span>ReactJS, Node.js</span>
-			  </div>
-			</header>
-			<p>user bio</p>
-			<a href="https://github.com/CaioOliveira793">Acessar perfil no GitHub</a>
-		  </li>
+		  {devs.map(dev => (
+		    <li key={dev._id} className="dev-item">
+		  	  <header>
+			    <img
+			      src={dev.avatar_url}
+			      alt={dev.name}
+			    />
+			    <div className="user-info">
+				  <strong>{dev.name}</strong>
+				  <span>{dev.techs.join(', ')}</span>
+			    </div>
+			  </header>
+			  <p>{dev.bio}</p>
+			  <a href={`https://github.com/${dev.github_username}`}>Acessar perfil no GitHub</a>
+		    </li>
+		  ))}
 		</ul>
 	  </main>
 	</div>
